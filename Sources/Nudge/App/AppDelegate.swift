@@ -85,7 +85,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        let settingsView = SettingsView(appState: appState, quotaManager: usageQuotaManager)
+        let settingsView = SettingsView(appState: appState)
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 450, height: 340),
             styleMask: [.titled, .closable],

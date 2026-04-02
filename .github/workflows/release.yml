@@ -81,7 +81,18 @@ jobs:
           xcrun stapler staple .build/release/Nudgy.app
 
       - name: Create DMG
-        run: make dmg VERSION=${{ steps.version.outputs.VERSION }}
+        env:
+          VERSION: ${{ steps.version.outputs.VERSION }}
+        run: |
+          rm -rf .build/release/dmg-staging
+          mkdir -p .build/release/dmg-staging
+          cp -r .build/release/Nudgy.app .build/release/dmg-staging/
+          ln -sf /Applications .build/release/dmg-staging/Applications
+          hdiutil create -volname "Nudgy" \
+            -srcfolder .build/release/dmg-staging \
+            -ov -format UDBZ \
+            ".build/release/Nudgy-${VERSION}.dmg"
+          rm -rf .build/release/dmg-staging
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

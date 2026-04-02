@@ -31,6 +31,7 @@ package: build
 	cp $(BUILD_DIR)/Nudgy $(APP_BUNDLE)/Contents/MacOS/
 	cp Info.plist $(APP_BUNDLE)/Contents/
 	echo -n "APPL????" > $(APP_BUNDLE)/Contents/PkgInfo
+	cp AppIcon.icns $(APP_BUNDLE)/Contents/Resources/AppIcon.icns
 	-cp -r Sources/Nudgy/Resources/* $(APP_BUNDLE)/Contents/Resources/ 2>/dev/null
 
 # Code sign (requires SIGNING_IDENTITY env var)

@@ -116,6 +116,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return token
     }
 
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        menuBarManager.openPopover()
+        return false
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         httpServer?.stop()
         Task { await sessionManager.stopCleanupTimer() }

@@ -94,13 +94,6 @@ make package    # Create .app bundle
 make dmg        # Create distributable DMG
 ```
 
-For code signing and notarization (distribution):
-
-```bash
-SIGNING_IDENTITY="Developer ID Application: ..." make sign
-APPLE_ID="..." TEAM_ID="..." APP_PASSWORD="..." make notarize
-```
-
 ## Architecture
 
 Nudgy is built with SwiftUI + AppKit hybrid using zero external dependencies:

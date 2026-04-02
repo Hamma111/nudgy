@@ -74,6 +74,12 @@ final class MenuBarManager {
         }
     }
 
+    func openPopover() {
+        if popover?.isShown != true {
+            showPopover()
+        }
+    }
+
     @objc private func togglePopover() {
         if let popover = popover, popover.isShown {
             popover.performClose(nil)

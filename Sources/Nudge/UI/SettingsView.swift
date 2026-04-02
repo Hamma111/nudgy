@@ -21,7 +21,7 @@ struct SettingsView: View {
                     Label("About", systemImage: "info.circle")
                 }
         }
-        .frame(width: 450, height: 380)
+        .frame(width: 480, height: 440)
     }
 }
 
@@ -217,20 +217,22 @@ struct AboutTab: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(2)
-                    .frame(maxWidth: 340)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: 400)
             }
             .padding(.top, 4)
 
             // Privacy
-            HStack(spacing: 4) {
+            HStack(alignment: .top, spacing: 4) {
                 Image(systemName: "lock.shield")
                     .font(.system(size: 11))
                     .foregroundStyle(.green)
-                Text("Your conversations and code never leave your machine. No telemetry, no analytics, no remote logging. Everything stays local. Code is open-source, feel free to scrutanize.")
+                Text("Your conversations and code never leave your machine. No telemetry, no analytics, no remote logging. Everything stays local. Code is open-source, feel free to scrutinize.")
                     .font(.system(size: 11.5))
                     .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .frame(maxWidth: 340)
+            .frame(maxWidth: 400)
             .padding(.top, 2)
 
             Divider()

@@ -1,0 +1,80 @@
+<svg width="320" height="380" viewBox="0 0 320 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Window chrome -->
+  <rect x="10" y="10" width="300" height="360" rx="12" fill="#f5f5f5" stroke="#d4d4d4" stroke-width="1"/>
+
+  <!-- Session dots bar -->
+  <rect x="30" y="24" width="22" height="5" rx="2" fill="#f59e0b" opacity="0.8"/>
+  <rect x="56" y="24" width="22" height="5" rx="2" fill="#4ade80" opacity="0.7"/>
+  <rect x="82" y="24" width="22" height="5" rx="2" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Divider -->
+  <line x1="24" y1="40" x2="296" y2="40" stroke="#e5e5e5" stroke-width="0.5"/>
+
+  <!-- Attention header -->
+  <circle cx="30" cy="58" r="3.5" fill="#f59e0b"/>
+  <text x="38" y="62" font-family="-apple-system, system-ui, sans-serif" font-size="11" font-weight="600" fill="#f59e0b">1 needs you</text>
+
+  <!-- Attention row -->
+  <circle cx="30" cy="82" r="4" fill="#f59e0b"/>
+  <text x="40" y="86" font-family="-apple-system, system-ui, sans-serif" font-size="13" font-weight="500" fill="#1a1a1a">my-project</text>
+  <text x="248" y="86" font-family="-apple-system, system-ui, sans-serif" font-size="11" fill="#888">now</text>
+
+  <!-- Detail line -->
+  <text x="40" y="102" font-family="-apple-system, system-ui, sans-serif" font-size="11" font-weight="500" fill="#f59e0b">Bash</text>
+  <text x="68" y="102" font-family="-apple-system, system-ui, sans-serif" font-size="11" fill="#666"> · </text>
+  <text x="78" y="102" font-family="SF Mono, Menlo, monospace" font-size="10" fill="#555">npm run build</text>
+
+  <!-- Go button -->
+  <rect x="248" y="92" width="38" height="18" rx="9" fill="#f59e0b" opacity="0.15"/>
+  <text x="257" y="104" font-family="-apple-system, system-ui, sans-serif" font-size="10" font-weight="600" fill="#f59e0b">Go</text>
+
+  <!-- Divider -->
+  <line x1="24" y1="118" x2="296" y2="118" stroke="#e5e5e5" stroke-width="0.5"/>
+
+  <!-- Background sessions -->
+  <circle cx="30" cy="140" r="4" fill="#4ade80"/>
+  <text x="40" y="144" font-family="-apple-system, system-ui, sans-serif" font-size="12" font-weight="500" fill="#1a1a1a">nudgy</text>
+  <text x="200" y="144" font-family="-apple-system, system-ui, sans-serif" font-size="11" fill="#777">done</text>
+  <text x="232" y="144" font-family="-apple-system, system-ui, sans-serif" font-size="10" fill="#999">45.2k</text>
+  <text x="268" y="144" font-family="-apple-system, system-ui, sans-serif" font-size="10" fill="#aaa">3m</text>
+
+  <circle cx="30" cy="166" r="4" fill="#ef4444"/>
+  <text x="40" y="170" font-family="-apple-system, system-ui, sans-serif" font-size="12" font-weight="500" fill="#1a1a1a">api</text>
+  <text x="208" y="170" font-family="-apple-system, system-ui, sans-serif" font-size="11" fill="#777">error</text>
+  <text x="268" y="170" font-family="-apple-system, system-ui, sans-serif" font-size="10" fill="#aaa">5m</text>
+
+  <circle cx="30" cy="192" r="4" fill="#4ade80"/>
+  <text x="40" y="196" font-family="-apple-system, system-ui, sans-serif" font-size="12" font-weight="500" fill="#1a1a1a">webapp</text>
+  <text x="200" y="196" font-family="-apple-system, system-ui, sans-serif" font-size="11" fill="#777">done</text>
+  <text x="232" y="196" font-family="-apple-system, system-ui, sans-serif" font-size="10" fill="#999">12.8k</text>
+  <text x="268" y="196" font-family="-apple-system, system-ui, sans-serif" font-size="10" fill="#aaa">8m</text>
+
+  <!-- Divider -->
+  <line x1="24" y1="212" x2="296" y2="212" stroke="#e5e5e5" stroke-width="0.5"/>
+
+  <!-- Recent header -->
+  <text x="30" y="232" font-family="-apple-system, system-ui, sans-serif" font-size="10" font-weight="600" fill="#999">Recent</text>
+
+  <!-- Recent rows -->
+  <circle cx="30" cy="252" r="2.5" fill="#f59e0b"/>
+  <text x="38" y="256" font-family="-apple-system, system-ui, sans-serif" font-size="11" font-weight="500" fill="#555">Permission</text>
+  <text x="108" y="256" font-family="-apple-system, system-ui, sans-serif" font-size="11" fill="#aaa">my-project</text>
+  <text x="270" y="256" font-family="-apple-system, system-ui, sans-serif" font-size="10" fill="#bbb">now</text>
+
+  <circle cx="30" cy="274" r="2.5" fill="#4ade80"/>
+  <text x="38" y="278" font-family="-apple-system, system-ui, sans-serif" font-size="11" font-weight="500" fill="#555">Done</text>
+  <text x="72" y="278" font-family="-apple-system, system-ui, sans-serif" font-size="11" fill="#aaa">nudgy</text>
+  <text x="270" y="278" font-family="-apple-system, system-ui, sans-serif" font-size="10" fill="#bbb">3m</text>
+
+  <circle cx="30" cy="296" r="2.5" fill="#ef4444"/>
+  <text x="38" y="300" font-family="-apple-system, system-ui, sans-serif" font-size="11" font-weight="500" fill="#555">Error</text>
+  <text x="72" y="300" font-family="-apple-system, system-ui, sans-serif" font-size="11" fill="#aaa">api</text>
+  <text x="270" y="300" font-family="-apple-system, system-ui, sans-serif" font-size="10" fill="#bbb">5m</text>
+
+  <!-- Divider -->
+  <line x1="24" y1="316" x2="296" y2="316" stroke="#e5e5e5" stroke-width="0.5"/>
+
+  <!-- Footer -->
+  <text x="30" y="340" font-family="-apple-system, system-ui, sans-serif" font-size="11" fill="#999">Settings...</text>
+  <text x="270" y="340" font-family="-apple-system, system-ui, sans-serif" font-size="11" fill="#bbb">Quit</text>
+</svg>

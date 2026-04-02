@@ -1,0 +1,60 @@
+<svg width="680" height="160" viewBox="0 0 680 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Background -->
+  <rect width="680" height="160" rx="12" fill="#1a1a1a"/>
+
+  <!-- Preset 1: Minimal -->
+  <g transform="translate(20, 55)">
+    <rect width="130" height="34" rx="7" fill="#1c1c1c" stroke="#333" stroke-width="0.5"/>
+    <circle cx="14" cy="17" r="4" fill="#4ade80"/>
+    <text x="24" y="21" font-family="-apple-system, system-ui, sans-serif" font-size="11" font-weight="600" fill="#e5e5e5">Done</text>
+    <text x="58" y="21" font-family="-apple-system, system-ui, sans-serif" font-size="9" fill="#666">my-app</text>
+  </g>
+  <text x="55" y="110" font-family="-apple-system, system-ui, sans-serif" font-size="9" fill="#666" text-anchor="middle">Minimal</text>
+
+  <!-- Preset 2: Pill -->
+  <g transform="translate(165, 55)">
+    <rect width="110" height="30" rx="15" fill="#4ade80" opacity="0.85"/>
+    <circle cx="16" cy="15" r="4" fill="white"/>
+    <text x="26" y="19" font-family="-apple-system, system-ui, sans-serif" font-size="10.5" font-weight="700" fill="white">Done</text>
+    <text x="62" y="19" font-family="-apple-system, system-ui, sans-serif" font-size="9" fill="white" opacity="0.7">my-app</text>
+  </g>
+  <text x="205" y="110" font-family="-apple-system, system-ui, sans-serif" font-size="9" fill="#666" text-anchor="middle">Pill</text>
+
+  <!-- Preset 3: Glass -->
+  <g transform="translate(290, 46)">
+    <rect width="160" height="48" rx="14" fill="#2a2a2e" stroke="#555" stroke-width="0.5"/>
+    <circle cx="26" cy="24" r="14" fill="#4ade80" opacity="0.2"/>
+    <text x="22" y="28" font-family="-apple-system, system-ui, sans-serif" font-size="13" fill="#4ade80">&#x2713;</text>
+    <text x="46" y="20" font-family="-apple-system, system-ui, sans-serif" font-size="12" font-weight="600" fill="#e5e5e5">Done</text>
+    <text x="46" y="34" font-family="-apple-system, system-ui, sans-serif" font-size="10" fill="#888">Finished working</text>
+  </g>
+  <text x="370" y="116" font-family="-apple-system, system-ui, sans-serif" font-size="9" fill="#666" text-anchor="middle">Glass</text>
+
+  <!-- Preset 4: Card -->
+  <g transform="translate(466, 42)">
+    <rect width="90" height="56" rx="6" fill="#141414" stroke="#333" stroke-width="0.5"/>
+    <rect width="4" height="56" rx="2" fill="#4ade80"/>
+    <text x="12" y="18" font-family="-apple-system, system-ui, sans-serif" font-size="8" font-weight="800" fill="#4ade80" letter-spacing="0.5">DONE</text>
+    <text x="12" y="33" font-family="-apple-system, system-ui, sans-serif" font-size="11" font-weight="600" fill="#e5e5e5">my-app</text>
+    <text x="12" y="47" font-family="-apple-system, system-ui, sans-serif" font-size="9" fill="#666">Finished working</text>
+  </g>
+  <text x="511" y="116" font-family="-apple-system, system-ui, sans-serif" font-size="9" fill="#666" text-anchor="middle">Card</text>
+
+  <!-- Preset 5: Banner -->
+  <g transform="translate(572, 46)">
+    <rect width="96" height="50" rx="10" fill="#2a2a2e" stroke="#444" stroke-width="0.5"/>
+    <rect x="8" y="11" width="22" height="22" rx="5" fill="#4ade80"/>
+    <text x="14" y="26" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="white">&#x266A;</text>
+    <text x="36" y="20" font-family="-apple-system, system-ui, sans-serif" font-size="8" font-weight="700" fill="#888">NUDGY</text>
+    <text x="66" y="20" font-family="-apple-system, system-ui, sans-serif" font-size="8" fill="#555">now</text>
+    <text x="36" y="33" font-family="-apple-system, system-ui, sans-serif" font-size="10" font-weight="500" fill="#e5e5e5">Done</text>
+  </g>
+  <text x="620" y="116" font-family="-apple-system, system-ui, sans-serif" font-size="9" fill="#666" text-anchor="middle">Banner</text>
+
+  <!-- Title -->
+  <text x="340" y="20" font-family="-apple-system, system-ui, sans-serif" font-size="11" font-weight="600" fill="#888" text-anchor="middle">5 Popup Presets</text>
+
+  <!-- Subtitle -->
+  <text x="340" y="148" font-family="-apple-system, system-ui, sans-serif" font-size="9" fill="#555" text-anchor="middle">Choose your style in Settings &#x2192; Appearance</text>
+</svg>

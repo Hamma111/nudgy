@@ -3,18 +3,18 @@ import AppKit
 /// Programmatic menubar icon for Nudgy.
 /// Drawn as a template image so macOS handles dark/light mode automatically.
 ///
-/// Design: A speech bubble silhouette with a small pointed tail at the bottom-left,
-/// representing notification/communication — the core purpose of Nudgy.
+/// Design: A solid dot in the bottom-left with concentric arcs radiating outward —
+/// a pulse/ping signal representing "hey, pay attention."
 enum NudgyIcon {
 
     /// Create the menubar icon.
     /// - Parameters:
-    ///   - filled: Whether the bubble is solid-filled (active/attention) or outlined (idle).
+    ///   - filled: Whether the dot is larger and arcs are thicker (active/attention) or thin (idle).
     ///   - badge: Whether to show a small dot badge in the upper-right (needs attention).
     ///   - size: Point size of the icon (standard menubar is 18pt).
     static func menuBarIcon(filled: Bool = false, badge: Bool = false, size: CGFloat = 18) -> NSImage {
         let image = NSImage(size: NSSize(width: size, height: size), flipped: false) { rect in
-            drawBubble(in: rect, filled: filled)
+            drawPulse(in: rect, filled: filled)
             if badge {
                 drawBadge(in: rect)
             }
@@ -25,39 +25,66 @@ enum NudgyIcon {
 
     // MARK: - Drawing
 
-    private static func drawBubble(in rect: NSRect, filled: Bool) {
+    private static func drawPulse(in rect: NSRect, filled: Bool) {
         let w = rect.width
         let h = rect.height
 
-        // Bubble body: rounded rectangle
-        let bubbleRect = NSRect(
-            x: w * 0.06,
-            y: h * 0.28,
-            width: w * 0.88,
-            height: h * 0.61
+        // Origin dot — bottom-left area
+        let dotRadius = filled ? w * 0.11 : w * 0.09
+        let dotCenter = NSPoint(x: w * 0.22, y: h * 0.22)
+        let dot = NSBezierPath(
+            ovalIn: NSRect(
+                x: dotCenter.x - dotRadius,
+                y: dotCenter.y - dotRadius,
+                width: dotRadius * 2,
+                height: dotRadius * 2
+            )
         )
-        let cornerRadius = w * 0.19
+        NSColor.black.setFill()
+        dot.fill()
 
-        let bubble = NSBezierPath(roundedRect: bubbleRect, xRadius: cornerRadius, yRadius: cornerRadius)
+        // Radiating arcs — quarter circles sweeping from the dot outward
+        let strokeBase: CGFloat = filled ? 1.6 : 1.3
+        let arcCenter = dotCenter
 
-        // Tail: small triangle pointing down-left from the bubble bottom edge
-        let tail = NSBezierPath()
-        tail.move(to: NSPoint(x: w * 0.22, y: h * 0.28))
-        tail.line(to: NSPoint(x: w * 0.11, y: h * 0.06))
-        tail.line(to: NSPoint(x: w * 0.39, y: h * 0.28))
-        tail.close()
-
-        bubble.append(tail)
-
+        // Arc 1 (closest)
+        let arc1 = NSBezierPath()
+        arc1.appendArc(
+            withCenter: arcCenter,
+            radius: w * 0.28,
+            startAngle: 20,
+            endAngle: 80
+        )
+        arc1.lineWidth = strokeBase
+        arc1.lineCapStyle = .round
         NSColor.black.set()
+        arc1.stroke()
 
-        if filled {
-            bubble.fill()
-        } else {
-            bubble.lineWidth = w * 0.083 // ~1.5pt at 18pt size
-            bubble.lineJoinStyle = .round
-            bubble.stroke()
-        }
+        // Arc 2 (middle)
+        let arc2 = NSBezierPath()
+        arc2.appendArc(
+            withCenter: arcCenter,
+            radius: w * 0.46,
+            startAngle: 18,
+            endAngle: 82
+        )
+        arc2.lineWidth = strokeBase * 0.9
+        arc2.lineCapStyle = .round
+        NSColor.black.withAlphaComponent(filled ? 0.85 : 0.7).set()
+        arc2.stroke()
+
+        // Arc 3 (farthest)
+        let arc3 = NSBezierPath()
+        arc3.appendArc(
+            withCenter: arcCenter,
+            radius: w * 0.64,
+            startAngle: 16,
+            endAngle: 84
+        )
+        arc3.lineWidth = strokeBase * 0.75
+        arc3.lineCapStyle = .round
+        NSColor.black.withAlphaComponent(filled ? 0.6 : 0.4).set()
+        arc3.stroke()
     }
 
     private static func drawBadge(in rect: NSRect) {
@@ -65,7 +92,7 @@ enum NudgyIcon {
         let h = rect.height
 
         // Small circular badge in upper-right corner
-        let badgeSize = w * 0.30
+        let badgeSize = w * 0.28
         let badgeRect = NSRect(
             x: w - badgeSize - w * 0.02,
             y: h - badgeSize - h * 0.02,

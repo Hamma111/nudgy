@@ -189,6 +189,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             style = .error
             title = "Error"
             message = event.matcher ?? "Something went wrong"
+        case .active:
+            style = .info
+            title = "Working"
+            message = session.displayName
         default:
             style = .info
             title = event.hookEventName
@@ -237,7 +241,8 @@ extension AppDelegate: HTTPServerDelegate {
                 case "Notification":
                     shouldNotify = true
                 case "PermissionRequest":
-                    // Permission dialog shown — always notify
+                    shouldNotify = true
+                case "SessionStart":
                     shouldNotify = true
                 default:
                     shouldNotify = false

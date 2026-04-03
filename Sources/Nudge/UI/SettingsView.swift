@@ -38,7 +38,7 @@ struct GeneralSettingsTab: View {
     @AppStorage("nudgy.notify.warning") private var notifyWarning: Bool = true
     @AppStorage("nudgy.notify.question") private var notifyQuestion: Bool = true
     @AppStorage("nudgy.notify.error") private var notifyError: Bool = true
-    @AppStorage("nudgy.notify.info") private var notifyInfo: Bool = true
+    @AppStorage("nudgy.notify.info") private var notifyInfo: Bool = false
 
     var body: some View {
         Form {
@@ -54,7 +54,7 @@ struct GeneralSettingsTab: View {
                 NotificationRow(style: .warning, effect: .warning, label: "Warning", soundEnabled: soundEnabled, isOn: $notifyWarning)
                 NotificationRow(style: .question, effect: .question, label: "Question", soundEnabled: soundEnabled, isOn: $notifyQuestion)
                 NotificationRow(style: .error, effect: .error, label: "Error", soundEnabled: soundEnabled, isOn: $notifyError)
-                NotificationRow(style: .info, effect: .info, label: "Info", soundEnabled: soundEnabled, isOn: $notifyInfo)
+                NotificationRow(style: .info, effect: .info, label: "Working", soundEnabled: soundEnabled, isOn: $notifyInfo)
             }
 
             Section("Sound") {

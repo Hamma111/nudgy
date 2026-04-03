@@ -95,7 +95,9 @@ enum NotificationStyle: String, Sendable {
 
     /// Whether this notification style is enabled by the user in Settings.
     var isEnabled: Bool {
-        UserDefaults.standard.object(forKey: "nudgy.notify.\(rawValue)") as? Bool ?? true
+        let key = "nudgy.notify.\(rawValue)"
+        let defaultValue = self != .info
+        return UserDefaults.standard.object(forKey: key) as? Bool ?? defaultValue
     }
 }
 

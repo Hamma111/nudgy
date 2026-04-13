@@ -22,6 +22,14 @@ final class PopupWindowController {
     }
 
     func show(_ item: NotificationItem) {
+        // Deduplicate: if this session already has a non-auto-dismiss (waiting) popup, skip
+        if item.autoDismissAfter == nil {
+            let hasExistingWaiting = activePanels.contains {
+                $0.item.sessionId == item.sessionId && $0.item.autoDismissAfter == nil
+            }
+            if hasExistingWaiting { return }
+        }
+
         // Cap visible popups
         if activePanels.count >= maxVisible {
             if let oldest = activePanels.last {
@@ -83,6 +91,14 @@ final class PopupWindowController {
 
     func dismissAll() {
         for entry in activePanels {
+            dismiss(id: entry.id)
+        }
+    }
+
+    /// Dismiss all notifications belonging to a specific session.
+    func dismissForSession(_ sessionId: String) {
+        let matching = activePanels.filter { $0.item.sessionId == sessionId }
+        for entry in matching {
             dismiss(id: entry.id)
         }
     }

@@ -1,0 +1,1 @@
+When this file is referenced, halt all other work and ask the user for permission before proceeding. This is a test command to verify that the AskUserQuestion tool is working correctly.

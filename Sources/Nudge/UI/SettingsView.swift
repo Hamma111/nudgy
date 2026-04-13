@@ -3,6 +3,7 @@ import ServiceManagement
 
 struct SettingsView: View {
     let appState: AppState
+    var onTestNotification: ((NotificationItem) -> Void)?
 
     var body: some View {
         TabView {
@@ -16,12 +17,17 @@ struct SettingsView: View {
                     Label("Appearance", systemImage: "paintbrush")
                 }
 
+            TestingTab(onTestNotification: onTestNotification)
+                .tabItem {
+                    Label("Test", systemImage: "flask")
+                }
+
             AboutTab(appState: appState)
                 .tabItem {
                     Label("About", systemImage: "info.circle")
                 }
         }
-        .frame(width: 480, height: 440)
+        .frame(width: 560, height: 480)
     }
 }
 
@@ -184,6 +190,147 @@ struct AppearanceTab: View {
         }
         .formStyle(.grouped)
         .padding()
+    }
+}
+
+// MARK: - Testing Tab
+
+struct TestingTab: View {
+    var onTestNotification: ((NotificationItem) -> Void)?
+    @AppStorage("nudgy.popupPreset") private var popupPreset: String = PopupPreset.glass.rawValue
+    @State private var customTitle: String = "Task Complete"
+    @State private var customMessage: String = "Finished building feature"
+    @State private var customProject: String = "my-project"
+    @State private var selectedStyle: NotificationStyle = .success
+    @State private var autoDismiss: Bool = true
+
+    private static let presets: [(style: NotificationStyle, title: String, message: String)] = [
+        (.success, "Task Complete", "Finished building feature"),
+        (.warning, "Permission Needed", "Wants to run shell command"),
+        (.question, "Input Required", "Waiting for your response"),
+        (.error, "Command Failed", "Process exited with code 1"),
+        (.info, "Working...", "Running tests"),
+    ]
+
+    var body: some View {
+        Form {
+            Section("Quick Fire") {
+                Text("Send a real notification popup for each style")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                HStack(spacing: 8) {
+                    ForEach(Self.presets, id: \.style.rawValue) { preset in
+                        Button {
+                            fire(style: preset.style, title: preset.title, message: preset.message)
+                        } label: {
+                            VStack(spacing: 4) {
+                                Image(systemName: preset.style.icon)
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(preset.style.color)
+                                Text(preset.style.rawValue.capitalized)
+                                    .font(.system(size: 9, weight: .medium))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                        }
+                        .buttonStyle(.plain)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(preset.style.color.opacity(0.08))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(preset.style.color.opacity(0.2), lineWidth: 0.5)
+                        )
+                    }
+                }
+                .padding(.vertical, 4)
+
+                Button("Fire All Sequentially") {
+                    fireAllSequentially()
+                }
+                .controlSize(.small)
+            }
+
+            Section("Custom Notification") {
+                Picker("Style", selection: $selectedStyle) {
+                    ForEach([NotificationStyle.success, .warning, .question, .error, .info], id: \.rawValue) { style in
+                        HStack {
+                            Image(systemName: style.icon)
+                                .foregroundStyle(style.color)
+                            Text(style.rawValue.capitalized)
+                        }
+                        .tag(style)
+                    }
+                }
+
+                TextField("Title", text: $customTitle)
+                TextField("Message", text: $customMessage)
+                TextField("Project Name", text: $customProject)
+                Toggle("Auto-dismiss (3s)", isOn: $autoDismiss)
+
+                HStack {
+                    Spacer()
+                    Button("Send Notification") {
+                        fire(style: selectedStyle, title: customTitle, message: customMessage, project: customProject, dismiss: autoDismiss)
+                    }
+                    .controlSize(.regular)
+                }
+            }
+
+            Section("Preview") {
+                let activePreset = PopupPreset(rawValue: popupPreset) ?? .glass
+                let previewItem = NotificationItem(
+                    sessionId: "preview",
+                    projectName: customProject,
+                    title: customTitle,
+                    message: customMessage,
+                    style: selectedStyle,
+                    autoDismissAfter: nil
+                )
+
+                HStack {
+                    Spacer()
+                    PopupContentView(
+                        item: previewItem,
+                        onDismiss: {},
+                        onAction: { _ in },
+                        preset: activePreset
+                    )
+                    .scaleEffect(0.9)
+                    Spacer()
+                }
+                .padding(.vertical, 6)
+
+                Text("Using \(activePreset.rawValue) preset — change in Appearance tab")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .formStyle(.grouped)
+        .padding()
+    }
+
+    private func fire(style: NotificationStyle, title: String, message: String, project: String = "my-project", dismiss: Bool = true) {
+        let item = NotificationItem(
+            sessionId: "test-\(UUID().uuidString.prefix(8))",
+            projectName: project,
+            title: title,
+            message: message,
+            style: style,
+            autoDismissAfter: dismiss ? 3.0 : nil
+        )
+        onTestNotification?(item)
+    }
+
+    private func fireAllSequentially() {
+        for (i, preset) in Self.presets.enumerated() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.6) {
+                fire(style: preset.style, title: preset.title, message: preset.message)
+            }
+        }
     }
 }
 

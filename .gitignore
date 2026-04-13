@@ -49,6 +49,9 @@ Package.resolved
 *.dSYM.zip
 *.dSYM
 
+# Local files
+md files/TODOS.md
+
 # Misc
 *.log
 Thumbs.db

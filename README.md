@@ -52,16 +52,11 @@ Pick the notification style that fits your workflow — from a tiny dark chip to
 
 ### Download (Recommended)
 
-Grab the latest `.dmg` from [GitHub Releases](https://github.com/Hamma111/nudgy/releases/latest), open it, and drag Nudgy to Applications.
+1. Grab the latest `.dmg` from [GitHub Releases](https://github.com/Hamma111/nudgy/releases/latest)
+2. Open it, and drag Nudgy to Applications.
 
-### Build from Source
+Enjoy.
 
-```bash
-git clone https://github.com/Hamma111/nudgy.git
-cd nudge
-make package
-open .build/release/Nudgy.app
-```
 
 **Requirements:** macOS 14.0+ (Sonoma or later), Swift 5.9+
 

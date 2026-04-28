@@ -60,15 +60,12 @@ private struct PresetMinimal: View {
                 .font(.system(size: 9.5))
                 .foregroundStyle(.white.opacity(0.3))
 
-            if hovered {
-                Button(action: onDismiss) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 6, weight: .bold))
-                        .foregroundStyle(.white.opacity(0.4))
-                }
-                .buttonStyle(.plain)
-                .transition(.opacity)
+            Button(action: onDismiss) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 6, weight: .bold))
+                    .foregroundStyle(.white.opacity(hovered ? 0.4 : 0.12))
             }
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
@@ -121,6 +118,12 @@ private struct PresetGlass: View {
     let onDismiss: () -> Void
     @State private var hovered = false
 
+    private var subtitle: String {
+        if !item.message.isEmpty { return item.message }
+        if !item.projectName.isEmpty { return item.projectName }
+        return ""
+    }
+
     var body: some View {
         HStack(spacing: 10) {
             // Large icon circle
@@ -136,28 +139,29 @@ private struct PresetGlass: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.title)
                     .font(.system(size: 12, weight: .semibold))
-                Text(item.message.isEmpty ? item.projectName : item.message)
-                    .font(.system(size: 10.5))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
+                    .foregroundStyle(.white.opacity(0.9))
+                if !subtitle.isEmpty {
+                    Text(subtitle)
+                        .font(.system(size: 10.5))
+                        .foregroundStyle(.white.opacity(0.5))
+                        .lineLimit(2)
+                }
             }
 
             Spacer(minLength: 0)
 
-            if hovered {
-                Button(action: onDismiss) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 14))
-                        .foregroundStyle(.tertiary)
-                }
-                .buttonStyle(.plain)
-                .transition(.opacity)
+            Button(action: onDismiss) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(.white.opacity(hovered ? 0.5 : 0.2))
             }
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
         .frame(width: 260)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14))
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14))
+        .environment(\.colorScheme, .dark)
         .overlay(
             RoundedRectangle(cornerRadius: 14)
                 .strokeBorder(

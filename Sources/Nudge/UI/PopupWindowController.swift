@@ -9,7 +9,7 @@ final class PopupWindowController {
     private let maxVisible: Int = 3
     private let stackGap: CGFloat = 4
     private let edgePadding: CGFloat = 12
-    private let panelHeight: CGFloat = 46
+    private let panelMinHeight: CGFloat = 46
 
     var onDismiss: ((UUID) -> Void)?
     var onAction: ((NotificationAction) -> Void)?
@@ -58,7 +58,7 @@ final class PopupWindowController {
         // Auto-dismiss
         if let delay = item.autoDismissAfter {
             dismissTimers[item.id] = Task {
-                try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                try? await Task.sleep(for: .seconds(delay))
                 guard !Task.isCancelled else { return }
                 dismiss(id: item.id)
             }
@@ -72,6 +72,10 @@ final class PopupWindowController {
         guard let index = activePanels.firstIndex(where: { $0.id == id }) else { return }
         let panel = activePanels[index].panel
 
+        // Remove from activePanels immediately so deduplication checks don't find stale entries
+        activePanels.remove(at: index)
+        repositionPanels(animated: true)
+
         let origin = panel.frame.origin
         NSAnimationContext.runAnimationGroup({ ctx in
             ctx.duration = reduceMotion ? 0.06 : 0.18
@@ -80,10 +84,6 @@ final class PopupWindowController {
             panel.animator().alphaValue = 0
         }, completionHandler: {
             panel.orderOut(nil)
-            Task { @MainActor [weak self] in
-                self?.activePanels.removeAll { $0.id == id }
-                self?.repositionPanels(animated: true)
-            }
         })
 
         onDismiss?(id)
@@ -122,7 +122,7 @@ final class PopupWindowController {
 
     private func createPanel(for item: NotificationItem) -> NSPanel {
         let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: panelWidth, height: panelHeight),
+            contentRect: NSRect(x: 0, y: 0, width: panelWidth, height: panelMinHeight),
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -152,12 +152,15 @@ final class PopupWindowController {
             preset: preset
         )
         let hostingView = NSHostingView(rootView: view)
-        hostingView.frame = NSRect(x: 0, y: 0, width: panelWidth, height: panelHeight)
+        // Use a generous initial frame so SwiftUI can calculate its natural size
+        hostingView.frame = NSRect(x: 0, y: 0, width: panelWidth, height: 200)
         let fittingSize = hostingView.fittingSize
-        panel.setContentSize(NSSize(
+        let finalSize = NSSize(
             width: max(panelWidth, fittingSize.width),
-            height: max(panelHeight, fittingSize.height)
-        ))
+            height: max(panelMinHeight, fittingSize.height)
+        )
+        panel.setContentSize(finalSize)
+        hostingView.frame = NSRect(origin: .zero, size: finalSize)
         panel.contentView = hostingView
         return panel
     }
@@ -170,7 +173,7 @@ final class PopupWindowController {
         guard let screen = NSScreen.main else { return .zero }
         let visible = screen.visibleFrame
         let w = panelSize?.width ?? panelWidth
-        let h = panelSize?.height ?? panelHeight
+        let h = panelSize?.height ?? panelMinHeight
         let offset = CGFloat(index) * (h + stackGap)
 
         let x: CGFloat

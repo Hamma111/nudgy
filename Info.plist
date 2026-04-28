@@ -16,7 +16,7 @@
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.6.0</string>
+    <string>0.6.1</string>
     <key>CFBundleExecutable</key>
     <string>Nudgy</string>
     <key>CFBundleIconFile</key>

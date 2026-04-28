@@ -239,21 +239,21 @@ extension AppDelegate: HTTPServerDelegate {
             await sessionManager.handleEvent(event)
 
             if let session = await sessionManager.session(for: event.sessionId ?? "unknown") {
-                // Dismiss stale notifications when session leaves a waiting state
-                let wasWaiting = previousState == .waitingPermission || previousState == .waitingInput
-                let isNoLongerWaiting = session.state != .waitingPermission && session.state != .waitingInput
-                if wasWaiting && isNoLongerWaiting {
-                    await MainActor.run {
-                        popupController.dismissForSession(session.id)
-                    }
-                }
-
                 let shouldNotify: Bool
                 switch event.hookEventName {
                 case "Stop", "StopFailure", "Notification", "PermissionRequest", "SessionStart":
                     shouldNotify = true
                 default:
                     shouldNotify = false
+                }
+
+                // Dismiss stale popups: on state change OR when a new notification replaces the old one
+                let wasWaiting = previousState == .waitingPermission || previousState == .waitingInput
+                let isNoLongerWaiting = session.state != .waitingPermission && session.state != .waitingInput
+                if (wasWaiting && isNoLongerWaiting) || shouldNotify {
+                    await MainActor.run {
+                        popupController.dismissForSession(session.id)
+                    }
                 }
 
                 if shouldNotify {

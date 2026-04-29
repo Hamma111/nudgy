@@ -4,7 +4,7 @@ SCHEME = Nudgy
 BUILD_DIR = .build/release
 APP_NAME = Nudgy
 APP_BUNDLE = $(BUILD_DIR)/$(APP_NAME).app
-VERSION ?= 0.1.0
+VERSION ?= $(shell cat VERSION | tr -d '[:space:]')
 DMG_NAME = $(APP_NAME)-$(VERSION).dmg
 
 # Build release binary

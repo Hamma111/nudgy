@@ -1,0 +1,41 @@
+name: Auto Tag
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'VERSION'
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version
+        id: version
+        run: echo "VERSION=$(cat VERSION | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Check if tag exists
+        id: check
+        env:
+          TAG_VERSION: ${{ steps.version.outputs.VERSION }}
+        run: |
+          if git rev-parse "v${TAG_VERSION}" >/dev/null 2>&1; then
+            echo "EXISTS=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "EXISTS=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create tag
+        if: steps.check.outputs.EXISTS == 'false'
+        env:
+          TAG_VERSION: ${{ steps.version.outputs.VERSION }}
+        run: |
+          git tag "v${TAG_VERSION}"
+          git push origin "v${TAG_VERSION}"

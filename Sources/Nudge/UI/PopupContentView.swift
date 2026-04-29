@@ -63,7 +63,7 @@ private struct PresetMinimal: View {
             Button(action: onDismiss) {
                 Image(systemName: "xmark")
                     .font(.system(size: 6, weight: .bold))
-                    .foregroundStyle(.white.opacity(hovered ? 0.4 : 0.12))
+                    .foregroundStyle(.white.opacity(hovered ? 0.9 : 0.55))
             }
             .buttonStyle(.plain)
         }
@@ -153,7 +153,7 @@ private struct PresetGlass: View {
             Button(action: onDismiss) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 14))
-                    .foregroundStyle(.white.opacity(hovered ? 0.5 : 0.2))
+                    .foregroundStyle(.white.opacity(hovered ? 0.9 : 0.6))
             }
             .buttonStyle(.plain)
         }
@@ -203,7 +203,7 @@ private struct PresetCard: View {
                     Button(action: onDismiss) {
                         Image(systemName: "xmark")
                             .font(.system(size: 7, weight: .bold))
-                            .foregroundStyle(.white.opacity(hovered ? 0.5 : 0.15))
+                            .foregroundStyle(.white.opacity(hovered ? 0.9 : 0.55))
                     }
                     .buttonStyle(.plain)
                 }

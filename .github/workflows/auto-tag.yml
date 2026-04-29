@@ -1,4 +1,4 @@
-name: Auto Tag
+name: Auto Tag & Release
 
 on:
   push:
@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+      created: ${{ steps.check.outputs.EXISTS == 'false' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -39,3 +42,97 @@ jobs:
         run: |
           git tag "v${TAG_VERSION}"
           git push origin "v${TAG_VERSION}"
+
+  build-and-release:
+    needs: create-tag
+    if: needs.create-tag.outputs.created == 'true'
+    runs-on: macos-14
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+      - name: Run tests
+        run: swift test
+
+      - name: Build release binary
+        run: swift build -c release
+
+      - name: Create app bundle
+        run: make package
+
+      - name: Import signing certificate
+        env:
+          CERTIFICATE_P12: ${{ secrets.CERTIFICATE_P12 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
+        run: |
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 32)
+
+          # Create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          # Import certificate
+          echo "$CERTIFICATE_P12" | base64 --decode > $RUNNER_TEMP/certificate.p12
+          security import $RUNNER_TEMP/certificate.p12 \
+            -P "$CERTIFICATE_PASSWORD" \
+            -A \
+            -t cert \
+            -f pkcs12 \
+            -k "$KEYCHAIN_PATH"
+
+          # Allow codesign to access the keychain
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+
+      - name: Sign app bundle
+        env:
+          SIGNING_IDENTITY: ${{ secrets.SIGNING_IDENTITY }}
+        run: |
+          codesign --deep --force --options runtime \
+            --sign "$SIGNING_IDENTITY" \
+            --entitlements Entitlements.plist \
+            .build/release/Nudgy.app
+          codesign --verify --verbose .build/release/Nudgy.app
+
+      - name: Notarize app
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          TEAM_ID: ${{ secrets.TEAM_ID }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+        run: |
+          ditto -c -k --keepParent .build/release/Nudgy.app .build/release/Nudgy.zip
+          xcrun notarytool submit .build/release/Nudgy.zip \
+            --apple-id "$APPLE_ID" \
+            --team-id "$TEAM_ID" \
+            --password "$APP_PASSWORD" \
+            --wait
+          xcrun stapler staple .build/release/Nudgy.app
+
+      - name: Create DMG
+        env:
+          VERSION: ${{ needs.create-tag.outputs.version }}
+        run: |
+          rm -rf .build/release/dmg-staging
+          mkdir -p .build/release/dmg-staging
+          cp -r .build/release/Nudgy.app .build/release/dmg-staging/
+          ln -sf /Applications .build/release/dmg-staging/Applications
+          hdiutil create -volname "Nudgy" \
+            -srcfolder .build/release/dmg-staging \
+            -ov -format UDBZ \
+            ".build/release/Nudgy-${VERSION}.dmg"
+          rm -rf .build/release/dmg-staging
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.create-tag.outputs.version }}
+          files: .build/release/Nudgy-${{ needs.create-tag.outputs.version }}.dmg
+          generate_release_notes: true
+          draft: false

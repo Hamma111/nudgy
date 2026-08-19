@@ -27,7 +27,7 @@ final class SmartSuppressorTests: XCTestCase {
     func testPermissionRequestIsNeverSuppressed() {
         let focuser = WindowFocuser()
         let suppressor = SmartSuppressor(windowFocuser: focuser)
-        let event = HookEvent(hookEventName: "Notification", sessionId: "s1", matcher: "permission_prompt")
+        let event = HookEvent(hookEventName: "Notification", sessionId: "s1", notificationType: "permission_prompt")
         let session = makeSession(state: .waitingPermission)
 
         let decision = suppressor.evaluate(event: event, session: session)
@@ -37,7 +37,7 @@ final class SmartSuppressorTests: XCTestCase {
     func testErrorIsNeverSuppressed() {
         let focuser = WindowFocuser()
         let suppressor = SmartSuppressor(windowFocuser: focuser)
-        let event = HookEvent(hookEventName: "StopFailure", sessionId: "s1", matcher: "rate_limit")
+        let event = HookEvent(hookEventName: "StopFailure", sessionId: "s1", error: "rate_limit")
         let session = makeSession(state: .error)
 
         let decision = suppressor.evaluate(event: event, session: session)
@@ -47,7 +47,7 @@ final class SmartSuppressorTests: XCTestCase {
     func testWaitingInputIsNeverSuppressed() {
         let focuser = WindowFocuser()
         let suppressor = SmartSuppressor(windowFocuser: focuser)
-        let event = HookEvent(hookEventName: "Notification", sessionId: "s1", matcher: "idle_prompt")
+        let event = HookEvent(hookEventName: "Notification", sessionId: "s1", notificationType: "idle_prompt")
         let session = makeSession(state: .waitingInput)
 
         let decision = suppressor.evaluate(event: event, session: session)
@@ -114,7 +114,7 @@ final class SmartSuppressorTests: XCTestCase {
             state: .waitingPermission,
             pendingPermissions: [stalePermission]
         )
-        let event = HookEvent(hookEventName: "Notification", sessionId: "s1", matcher: "permission_prompt")
+        let event = HookEvent(hookEventName: "Notification", sessionId: "s1", notificationType: "permission_prompt")
 
         let decision = suppressor.evaluate(event: event, session: session)
         XCTAssertEqual(decision, .escalate)

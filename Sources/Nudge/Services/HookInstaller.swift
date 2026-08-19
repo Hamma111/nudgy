@@ -26,15 +26,19 @@ final class HookInstaller {
         "Stop",
         "Notification",
         "StopFailure",
-        "SessionStart",
         "PermissionRequest",
         "SessionEnd",
     ]
 
     /// Events that were hooked in previous versions but are no longer needed.
     /// These are cleaned up during install to avoid error spam when Nudgy isn't running.
+    ///
+    /// `SessionStart` only supports `command` and `mcp_tool` handlers — an `http`
+    /// handler there is silently never invoked, so the entry was dead weight.
+    /// Sessions are created lazily on their first real event instead.
     private static let legacyEvents = [
         "PreToolUse",
+        "SessionStart",
     ]
 
     let port: UInt16
@@ -247,17 +251,14 @@ final class HookInstaller {
     }
 
     private func buildHookEntry(for eventType: String, url: String) -> [String: Any] {
-        var entry: [String: Any] = [
-            "hooks": [
-                ["type": "http", "url": url]
-            ]
-        ]
+        var hook: [String: Any] = ["type": "http", "url": url]
 
-        // SessionStart uses a matcher
-        if eventType == "SessionStart" {
-            entry["matcher"] = "startup|resume"
+        // SessionEnd hooks share a 1.5s budget by default; a localhost round trip
+        // fits easily, but be explicit so a slow start-up can't drop the event.
+        if eventType == "SessionEnd" {
+            hook["timeout"] = 5
         }
 
-        return entry
+        return ["hooks": [hook]]
     }
 }

@@ -31,7 +31,7 @@ final class IntegrationTests: XCTestCase {
 
     func testPermissionEventUpdatesAppState() async throws {
         await sendEvent(name: "SessionStart", sessionId: "int-2")
-        await sendEvent(name: "Notification", sessionId: "int-2", matcher: "permission_prompt")
+        await sendEvent(name: "Notification", sessionId: "int-2", detail: "permission_prompt")
 
         await MainActor.run {
             XCTAssertEqual(appState.highestPriorityState, .waitingPermission)
@@ -44,7 +44,7 @@ final class IntegrationTests: XCTestCase {
         await sendEvent(name: "SessionStart", sessionId: "ms-A", cwd: "/project-a")
         await sendEvent(name: "SessionStart", sessionId: "ms-B", cwd: "/project-b")
         await sendEvent(name: "Stop", sessionId: "ms-A")
-        await sendEvent(name: "Notification", sessionId: "ms-B", matcher: "permission_prompt")
+        await sendEvent(name: "Notification", sessionId: "ms-B", detail: "permission_prompt")
 
         await MainActor.run {
             XCTAssertEqual(appState.activeSessionCount, 2)
@@ -67,7 +67,7 @@ final class IntegrationTests: XCTestCase {
         XCTAssertEqual(session?.projectName, "project")
 
         // Permission request
-        await sendEvent(name: "Notification", sessionId: "life-1", matcher: "permission_prompt")
+        await sendEvent(name: "Notification", sessionId: "life-1", detail: "permission_prompt")
         session = await sessionManager.session(for: "life-1")
         XCTAssertEqual(session?.state, .waitingPermission)
         XCTAssertEqual(session?.pendingPermissions.count, 1)
@@ -94,10 +94,10 @@ final class IntegrationTests: XCTestCase {
         let suppressor = SmartSuppressor(windowFocuser: focuser)
 
         await sendEvent(name: "SessionStart", sessionId: "sup-1")
-        await sendEvent(name: "Notification", sessionId: "sup-1", matcher: "permission_prompt")
+        await sendEvent(name: "Notification", sessionId: "sup-1", detail: "permission_prompt")
 
         let session = await sessionManager.session(for: "sup-1")!
-        let event = HookEvent(hookEventName: "Notification", sessionId: "sup-1", matcher: "permission_prompt")
+        let event = HookEvent(hookEventName: "Notification", sessionId: "sup-1", notificationType: "permission_prompt")
 
         // Permission is NEVER suppressed
         let decision = suppressor.evaluate(event: event, session: session)
@@ -153,8 +153,8 @@ final class IntegrationTests: XCTestCase {
     func testEventStatsAccumulate() async throws {
         await sendEvent(name: "SessionStart", sessionId: "stats-1")
         await sendEvent(name: "Stop", sessionId: "stats-1")
-        await sendEvent(name: "Notification", sessionId: "stats-1", matcher: "permission_prompt")
-        await sendEvent(name: "StopFailure", sessionId: "stats-1", matcher: "rate_limit")
+        await sendEvent(name: "Notification", sessionId: "stats-1", detail: "permission_prompt")
+        await sendEvent(name: "StopFailure", sessionId: "stats-1", detail: "rate_limit")
 
         let session = await sessionManager.session(for: "stats-1")!
         XCTAssertEqual(session.stats.eventCount, 4)
@@ -212,12 +212,18 @@ final class IntegrationTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func sendEvent(name: String, sessionId: String, cwd: String? = nil, matcher: String? = nil) async {
+    /// Builds an event the way Claude Code actually sends it. The discriminator
+    /// field is named differently per event type, and `matcher` is never present
+    /// in hook input at all — it is a settings-side filter only.
+    private func sendEvent(name: String, sessionId: String, cwd: String? = nil, detail: String? = nil) async {
         let event = HookEvent(
             hookEventName: name,
             sessionId: sessionId,
             cwd: cwd,
-            matcher: matcher
+            notificationType: name == "Notification" ? detail : nil,
+            error: name == "StopFailure" ? detail : nil,
+            source: name == "SessionStart" ? detail : nil,
+            reason: name == "SessionEnd" ? detail : nil
         )
         await sessionManager.handleEvent(event)
     }

@@ -50,18 +50,25 @@ actor SessionManager {
             }
 
         case "Notification":
-            let matcher = event.matcher ?? ""
-            if matcher.contains("permission") {
+            // Claude Code sends `notification_type`; `matcher` is a settings-side
+            // filter and never appears in the payload.
+            switch event.notificationType {
+            case "permission_prompt":
                 session.state = .waitingPermission
                 session.pendingPermissions.append(PermissionRequest(from: event))
                 session.stats.permissionCount += 1
-            } else if matcher.contains("idle") || matcher.contains("input") || matcher.contains("question") {
+            case "idle_prompt", "agent_needs_input", "elicitation_dialog", "elicitation_url_dialog":
                 session.state = .waitingInput
+            case "agent_completed":
+                session.state = .idle
+            default:
+                // auth_success, elicitation_complete, etc. — record only, keep state
+                break
             }
-            // For any other notification, keep current state but record the event
 
         case "StopFailure":
-            if event.matcher == "max_output_tokens" {
+            // The error type lives in `error`, not `matcher`.
+            if event.error == "max_output_tokens" {
                 session.state = .idle
             } else {
                 session.state = .error

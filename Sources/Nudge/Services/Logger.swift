@@ -56,8 +56,8 @@ final class NudgyLogger {
         NSLog("Nudgy: %@", message)
     }
 
-    func event(_ eventName: String, sessionId: String?, matcher: String?, tool: String?, cwd: String?) {
-        log("EVENT \(sanitize(eventName)) | session=\(sanitize(sessionId ?? "-")) | matcher=\(sanitize(matcher ?? "-")) | tool=\(sanitize(tool ?? "-")) | cwd=\(sanitize(cwd ?? "-"))")
+    func event(_ eventName: String, sessionId: String?, detail: String?, tool: String?, cwd: String?) {
+        log("EVENT \(sanitize(eventName)) | session=\(sanitize(sessionId ?? "-")) | detail=\(sanitize(detail ?? "-")) | tool=\(sanitize(tool ?? "-")) | cwd=\(sanitize(cwd ?? "-"))")
     }
 
     /// Strip control characters from untrusted input to prevent log injection.

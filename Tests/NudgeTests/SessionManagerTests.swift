@@ -17,7 +17,7 @@ final class SessionManagerTests: XCTestCase {
             hookEventName: "SessionStart",
             sessionId: "session-1",
             cwd: "/Users/dev/myproject",
-            matcher: "startup"
+            source: "startup"
         )
 
         await manager.handleEvent(event)
@@ -38,7 +38,7 @@ final class SessionManagerTests: XCTestCase {
 
     func testUpdateSessionStateOnPermission() async {
         await sendEvent(name: "SessionStart", sessionId: "s1")
-        await sendEvent(name: "Notification", sessionId: "s1", matcher: "permission_prompt")
+        await sendEvent(name: "Notification", sessionId: "s1", detail: "permission_prompt")
 
         let session = await manager.session(for: "s1")
         XCTAssertEqual(session?.state, .waitingPermission)
@@ -47,7 +47,7 @@ final class SessionManagerTests: XCTestCase {
 
     func testUpdateSessionStateOnIdlePrompt() async {
         await sendEvent(name: "SessionStart", sessionId: "s1")
-        await sendEvent(name: "Notification", sessionId: "s1", matcher: "idle_prompt")
+        await sendEvent(name: "Notification", sessionId: "s1", detail: "idle_prompt")
 
         let session = await manager.session(for: "s1")
         XCTAssertEqual(session?.state, .waitingInput)
@@ -55,7 +55,7 @@ final class SessionManagerTests: XCTestCase {
 
     func testUpdateSessionStateOnError() async {
         await sendEvent(name: "SessionStart", sessionId: "s1")
-        await sendEvent(name: "StopFailure", sessionId: "s1", matcher: "rate_limit")
+        await sendEvent(name: "StopFailure", sessionId: "s1", detail: "rate_limit")
 
         let session = await manager.session(for: "s1")
         XCTAssertEqual(session?.state, .error)
@@ -72,7 +72,7 @@ final class SessionManagerTests: XCTestCase {
 
     func testMaxOutputTokensGoesToIdle() async {
         await sendEvent(name: "SessionStart", sessionId: "s1")
-        await sendEvent(name: "StopFailure", sessionId: "s1", matcher: "max_output_tokens")
+        await sendEvent(name: "StopFailure", sessionId: "s1", detail: "max_output_tokens")
 
         let session = await manager.session(for: "s1")
         XCTAssertEqual(session?.state, .idle)
@@ -160,17 +160,23 @@ final class SessionManagerTests: XCTestCase {
 
     // MARK: - Helpers
 
+    /// Builds an event the way Claude Code actually sends it. The discriminator
+    /// field is named differently per event type, and `matcher` is never present
+    /// in hook input at all — it is a settings-side filter only.
     private func sendEvent(
         name: String,
         sessionId: String,
         cwd: String? = nil,
-        matcher: String? = nil
+        detail: String? = nil
     ) async {
         let event = HookEvent(
             hookEventName: name,
             sessionId: sessionId,
             cwd: cwd,
-            matcher: matcher
+            notificationType: name == "Notification" ? detail : nil,
+            error: name == "StopFailure" ? detail : nil,
+            source: name == "SessionStart" ? detail : nil,
+            reason: name == "SessionEnd" ? detail : nil
         )
         await manager.handleEvent(event)
     }

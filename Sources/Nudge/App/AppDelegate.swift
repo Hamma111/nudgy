@@ -150,6 +150,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 menuBarManager.updateIcon()
                 return
             }
+            NudgyLogger.shared.log(
+                "Showing \(item.style.rawValue) notification | session=\(session.id) | state=\(session.state.rawValue)"
+            )
             appState.addNotification(item)
             popupController.show(item)
             soundManager.playForStyle(item.style)
@@ -160,6 +163,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         case .batch(let groupId):
             NudgyLogger.shared.log("Batched for session \(groupId)")
+        }
+    }
+
+    /// Human-readable text for a StopFailure `error` value.
+    private static func describeError(_ error: String) -> String {
+        switch error {
+        case "rate_limit": return "Rate limit reached"
+        case "overloaded": return "Claude is overloaded"
+        case "authentication_failed": return "Authentication failed"
+        case "oauth_org_not_allowed": return "Organization not allowed"
+        case "billing_error": return "Billing problem"
+        case "invalid_request": return "Invalid request"
+        case "model_not_found": return "Model not found"
+        case "server_error": return "Server error"
+        case "max_output_tokens": return "Hit max output tokens"
+        default: return "Something went wrong"
         }
     }
 
@@ -192,7 +211,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .error:
             style = .error
             title = "Error"
-            message = event.matcher ?? "Something went wrong"
+            message = event.errorDetails
+                ?? event.lastAssistantMessage
+                ?? event.error.map(Self.describeError)
+                ?? "Something went wrong"
         case .active:
             style = .info
             title = "Working"
@@ -227,7 +249,7 @@ extension AppDelegate: HTTPServerDelegate {
         NudgyLogger.shared.event(
             event.hookEventName,
             sessionId: event.sessionId,
-            matcher: event.matcher,
+            detail: event.discriminator,
             tool: event.toolName,
             cwd: event.cwd
         )

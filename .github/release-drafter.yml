@@ -1,0 +1,46 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+categories:
+  - title: '🚀 Features'
+    semver-increment: minor
+    when:
+      labels:
+        - enhancement
+        - feature
+  - title: '🐛 Bug Fixes'
+    when:
+      labels:
+        - bug
+        - fix
+  - title: '📚 Documentation'
+    when:
+      label: documentation
+  - title: '🧰 Maintenance'
+    when:
+      labels:
+        - chore
+        - dependencies
+  - type: pre-exclude
+    when:
+      label: skip-changelog
+  - type: version-resolver
+    semver-increment: major
+    when:
+      label: breaking-change
+  - type: version-resolver
+    semver-increment: patch
+
+change-template: '- $TITLE (#$NUMBER) $AUTHORS'
+change-title-escapes: '\<*_&'
+
+template: |
+  ## What's Changed
+
+  $CHANGES
+
+  ## Contributors
+
+  $CONTRIBUTORS
+
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION

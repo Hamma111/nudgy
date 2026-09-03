@@ -50,6 +50,10 @@ make run      # Build and run
 - Update documentation if your change affects user-facing behavior
 - Write a clear PR description explaining what and why
 
+Merged PRs are automatically collected into the next draft release. See
+[Releasing Nudgy](RELEASING.md) for version labels, publishing, and reusing the
+draft-release setup in another repository.
+
 ## Code Style
 
 - Follow existing code conventions in the project

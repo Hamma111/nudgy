@@ -5,6 +5,12 @@ on:
     tags:
       - 'v*'
 
+# Share the queue with draft updates and automatic version releases.
+concurrency:
+  group: release-${{ github.repository }}
+  queue: max
+  cancel-in-progress: false
+
 jobs:
   build-and-release:
     runs-on: macos-14

@@ -18,7 +18,7 @@ The next version is calculated from the last published release:
 | `breaking-change` | Major |
 | `enhancement` or `feature` | Minor |
 | Any other label, or no label | Patch |
-| `skip-changelog` | Omit the PR from the release notes |
+| `skip-changelog` | Omit the PR from notes and version calculation |
 
 The largest requested increment wins. Create optional labels such as
 `breaking-change` and `skip-changelog` in the repository when needed. Apply labels

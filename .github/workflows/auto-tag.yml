@@ -6,6 +6,12 @@ on:
     paths:
       - 'VERSION'
 
+# Share the queue with draft updates and manually tagged releases.
+concurrency:
+  group: release-${{ github.repository }}
+  queue: max
+  cancel-in-progress: false
+
 jobs:
   create-tag:
     runs-on: ubuntu-latest

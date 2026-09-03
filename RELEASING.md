@@ -46,6 +46,10 @@ are not needed for draft creation. Drafting uses only GitHub's built-in token,
 with `contents: write` (needed to manage releases) and `pull-requests: read`
 permissions, and does not check out or execute contributor code.
 
+All three release-writing workflows share a concurrency queue so a draft update
+cannot race with publication. If publication finishes before a queued draft
+update, that update may prepare an empty draft for the following version.
+
 ## Reuse in another repository
 
 1. Copy `.github/workflows/release-drafter.yml` and
@@ -56,6 +60,11 @@ permissions, and does not check out or execute contributor code.
    conventions. The provided setup assumes semantic versions such as `v1.2.3`.
 4. Merge a small PR and verify **Draft Next Release** creates a draft on the
    **Releases** page. No personal access token or signing secrets are required.
+
+If another workflow also writes GitHub releases, give it the same concurrency
+group, `queue: max`, and `cancel-in-progress: false` settings to serialize those
+writes. These queue settings are supported on GitHub.com; check support before
+copying them to an older GitHub Enterprise Server instance.
 
 This copies only the draft-release system. Keep each repository's own tested
 build and publishing process for attaching artifacts and shipping a version.

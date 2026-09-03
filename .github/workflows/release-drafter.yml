@@ -11,8 +11,9 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: release-drafter-${{ github.repository }}
-  cancel-in-progress: true
+  group: release-${{ github.repository }}
+  queue: max
+  cancel-in-progress: false
 
 jobs:
   update-release-draft:

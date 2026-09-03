@@ -1,0 +1,27 @@
+name: Draft Next Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: release-${{ github.repository }}
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  update-release-draft:
+    name: Update draft release
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create or update draft release
+        uses: release-drafter/release-drafter@34d80673e067bdc0c24568d3af899c216adcfaa9 # v7.7.0
+        with:
+          publish: false
